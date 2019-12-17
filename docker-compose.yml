@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  web:
+    container_name: ssdc
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - .:/app
+#      - ~/.ssh:/root/.ssh:ro
+#      - ~/.gitconfig:/etc/gitconfig
+    ports:
+      - "3000:3000"
+
+#  sync:
+#    build:
+#        context: ./
+#        dockerfile: Dockerfile-sync
+#    command: "lsyncd -delay 1 -nodaemon -rsync /src /var/www"
+#    volumes:
+#        - /var/www
+#        - "./:/src"
+#    working_dir: /src
+#    stdin_open: true
+#    tty: true

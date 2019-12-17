@@ -13,14 +13,11 @@
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calculatorModal">
     Launch Calclulator
   </button>
+  <div class="results mt-3">
+
+  </div>
 </div>
 
-<div class="container text-center">
-  <textarea> <%= debug(@results) %>  </textarea>
-</div>
-<div class="container text-center">
-  <textarea> <%= @length %>  </textarea>
-</div>
 <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -32,7 +29,7 @@
       </div>
       <div class="modal-body">
 
-        <form action="/products/search" method="post">
+        <form id="form-calculator">
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="input_length">Length</label>
@@ -60,10 +57,48 @@
           </div>
         </form>
 
+        <div class="modal-results text-center mt-3">
+
+        </div>
+
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#calculatorModal').on('shown.bs.modal', function (e) {
+            $('.modal-results').html('');
+            $('.results').html('');
+        });
+        $('#form-calculator').submit(function(e){
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+            $.ajax({
+                url: "/api/products",
+                data: $('#form-calculator').serialize(),
+                type: 'GET',
+                success: function (result) {
+                    console.log(result);
+                    if(result.code == 200){
+                        var result_html = "";
+                        $.each(result.data, function(index, val){
+                            result_html += "<h5>" + val.name +"</h5>"
+                        });
+                        $('.modal-results').html(result_html);
+                        setTimeout(function(){
+                            $('#calculatorModal').modal('hide');
+                            $('.results').html(result_html);
+                        }, 5000);
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        });
+    });
+</script>
 
 
 
